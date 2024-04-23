@@ -31,9 +31,11 @@
         const canvas = document.getElementById('myChart');
         // Stellt die Größe des Canvas korrekt ein
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+    const body = document.body;
+    canvas.width = body.clientWidth;
+    canvas.height = body.clientHeight;
+}
+
 
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas(); // Initial aufrufen, um die Größe beim ersten Laden zu setzen
