@@ -1,0 +1,12 @@
+{
+    "id": "{E2AF8516-18EA-F8B4-FD49-8F98AFF36D56}",
+    "name": "TileVisu Image Variable",
+    "type": 3,
+    "vendor": "",
+    "aliases": [],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "IMGV",
+    "url": "https://github.com/da8ter/TileVisu-Bild-Variable/blob/main/ImageVariable/README.md"
+}
