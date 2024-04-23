@@ -1,8 +1,8 @@
 {
-    "id": "{59FA630B-D9B9-F966-BCD8-C91CB77AFAA7}",
-    "name": "TileVisu Image Variable",
+    "id": "{E4DE064B-7F92-C2AA-9A1A-0E71B01B7B26}",
+    "name": "TileVisu Heating Curve Tile",
     "author": "Stephan Sprick",
-    "url": "https://github.com/da8ter/TileVisu-Bild-Variable.git",
+    "url": "https://github.com/da8ter/TileVisu-Heizkurve-Kachel.git",
     "compatibility": {
         "version": "7.1"
     },
