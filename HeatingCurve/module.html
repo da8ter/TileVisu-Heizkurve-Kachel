@@ -9,16 +9,32 @@
             position: fixed;
             width: 100%;
             height: 100%;
+            margin: 0;
             background-color: var(--hintergrundfarbe);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <canvas id="myChart" width="100%" height="100%"></canvas>
+    <canvas id="myChart"></canvas>
     <button onclick="updateValues([20, 20, 35, 35])">Daten aktualisieren</button>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const ctx = document.getElementById('myChart').getContext('2d');
+        const canvas = document.getElementById('myChart');
+        // Stellt die Größe des Canvas korrekt ein
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Initial aufrufen, um die Größe beim ersten Laden zu setzen
+
+        const ctx = canvas.getContext('2d');
         const myChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -31,13 +47,15 @@
                 }]
             },
             options: {
+                responsive: true, // Chart.js responsives Verhalten aktivieren
+                maintainAspectRatio: false, // Verhindert das Einhalten des Aspektverhältnisses
                 scales: {
                     x: {
                         type: 'linear',
                         position: 'bottom',
                         min: -10,
                         max: 15,
-                        reverse: true, // Umkehren der Skala
+                        reverse: true,
                         title: {
                             display: true,
                             text: 'Temperatur (°C)'
