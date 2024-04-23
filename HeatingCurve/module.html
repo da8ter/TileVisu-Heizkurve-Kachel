@@ -5,13 +5,24 @@
     <title>Temperaturdiagramm</title>
     <style>
         /* Ich passe margin vom Body an und überschreibe somit das Standardpadding der Darstellung zu den Seiten */
-        body {
-            display: block;
+        body:before {
+            content: '';
+            display: flex;
             position: fixed;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
+            z-index: -1;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: var(--bildtransparenz);
+            background: var(--background-image, none) center / cover no-repeat;
+        }
+
+        body {
+            justify-content: center;
+            display: flex;
         }
 
 
