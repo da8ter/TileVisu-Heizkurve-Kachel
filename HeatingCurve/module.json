@@ -1,12 +1,12 @@
 {
-    "id": "{E2AF8516-18EA-F8B4-FD49-8F98AFF36D56}",
-    "name": "TileVisu Image Variable",
+    "id": "{706F2B27-0983-DCAA-4D22-368D8AE820E2}",
+    "name": "TileVisu Heating Curve Tile",
     "type": 3,
     "vendor": "",
     "aliases": [],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "IMGV",
-    "url": "https://github.com/da8ter/TileVisu-Bild-Variable/blob/main/ImageVariable/README.md"
+    "prefix": "HECU",
+    "url": "https://github.com/da8ter/TileVisu-Heizkurve-Kachel/blob/main/HeatingCurve/README.md"
 }
