@@ -26,12 +26,23 @@
         .data-point {
             margin: 10px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: center; /* Zentriert die Buttons und Eingabefelder vertikal */
         }
-        .data-point input, .data-point button {
-            margin: 2px;
-            width: 50px;
+        .data-point label {
+            margin-right: 5px; /* Abstand zwischen Label und Steuerelementen */
+        }
+        .input-group {
+            display: flex; /* Flex-Container für Buttons und Eingabefeld */
+        }
+        .data-point input {
+            width: 50px; /* Setzt die Breite der Eingabefelder auf 50px */
+            text-align: center; /* Zentriert den Text im Eingabefeld */
+        }
+        .data-point button {
+            width: 25px; /* Setzt die Breite der Buttons */
+            height: 25px; /* Setzt die Höhe der Buttons */
+            padding: 0; /* Entfernt Padding von den Buttons */
+            line-height: 25px; /* Stellt sicher, dass der Text vertikal zentriert ist */
         }
     </style>
 </head>
@@ -96,50 +107,43 @@
             container.classList.add('data-point');
             const labelX = document.createElement('label');
             labelX.textContent = `x-Wert Punkt ${index + 1}: `;
-            const inputX = document.createElement('input');
-            inputX.type = 'number';
-            inputX.value = point.x;
-            const minusButtonX = document.createElement('button');
-            minusButtonX.textContent = '-';
-            minusButtonX.onclick = () => {
-                inputX.value = parseFloat(inputX.value) - 1;
-                updateChartValue(index, parseFloat(inputX.value), 'x');
-            };
-            const plusButtonX = document.createElement('button');
-            plusButtonX.textContent = '+';
-            plusButtonX.onclick = () => {
-                inputX.value = parseFloat(inputX.value) + 1;
-                updateChartValue(index, parseFloat(inputX.value), 'x');
-            };
-
+            const inputGroupX = createInputGroup(point.x, (newValue) => updateChartValue(index, newValue, 'x'));
             const labelY = document.createElement('label');
             labelY.textContent = `y-Wert Punkt ${index + 1}: `;
-            const inputY = document.createElement('input');
-            inputY.type = 'number';
-            inputY.value = point.y;
-            const minusButtonY = document.createElement('button');
-            minusButtonY.textContent = '-';
-            minusButtonY.onclick = () => {
-                inputY.value = parseInt(inputY.value) - 1;
-                updateChartValue(index, parseInt(inputY.value), 'y');
-            };
-            const plusButtonY = document.createElement('button');
-            plusButtonY.textContent = '+';
-            plusButtonY.onclick = () => {
-                inputY.value = parseInt(inputY.value) + 1;
-                updateChartValue(index, parseInt(inputY.value), 'y');
-            };
+            const inputGroupY = createInputGroup(point.y, (newValue) => updateChartValue(index, newValue, 'y'));
 
             container.appendChild(labelX);
-            container.appendChild(minusButtonX);
-            container.appendChild(inputX);
-            container.appendChild(plusButtonX);
+            container.appendChild(inputGroupX);
             container.appendChild(labelY);
-            container.appendChild(minusButtonY);
-            container.appendChild(inputY);
-            container.appendChild(plusButtonY);
+            container.appendChild(inputGroupY);
             controlsContainer.appendChild(container);
         });
+
+        function createInputGroup(initialValue, updateFunction) {
+            const group = document.createElement('div');
+            group.className = 'input-group';
+            const minusButton = document.createElement('button');
+            minusButton.textContent = '-';
+            minusButton.onclick = () => {
+                const newValue = parseFloat(input.value) - 1;
+                input.value = newValue;
+                updateFunction(newValue);
+            };
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = initialValue;
+            const plusButton = document.createElement('button');
+            plusButton.textContent = '+';
+            plusButton.onclick = () => {
+                const newValue = parseFloat(input.value) + 1;
+                input.value = newValue;
+                updateFunction(newValue);
+            };
+            group.appendChild(minusButton);
+            group.appendChild(input);
+            group.appendChild(plusButton);
+            return group;
+        }
 
         function updateChartValue(index, newValue, axis) {
             if (axis === 'y') {
