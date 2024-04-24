@@ -26,13 +26,15 @@
         .data-point {
             margin: 10px;
             display: flex;
-            align-items: center; /* Zentriert die Buttons und Eingabefelder vertikal */
+            flex-direction: column; /* Anordnung der Steuerelemente in einer vertikalen Spalte */
+            align-items: center;
         }
         .data-point label {
             margin-right: 5px; /* Abstand zwischen Label und Steuerelementen */
         }
         .input-group {
             display: flex; /* Flex-Container für Buttons und Eingabefeld */
+            margin-bottom: 10px; /* Abstand zwischen den x- und y-Eingabegruppen */
         }
         .data-point input {
             width: 50px; /* Setzt die Breite der Eingabefelder auf 50px */
@@ -106,10 +108,10 @@
             const container = document.createElement('div');
             container.classList.add('data-point');
             const labelX = document.createElement('label');
-            labelX.textContent = `x ${index + 1}: `;
+            labelX.textContent = `x-Wert Punkt ${index + 1}: `;
             const inputGroupX = createInputGroup(point.x, (newValue) => updateChartValue(index, newValue, 'x'));
             const labelY = document.createElement('label');
-            labelY.textContent = `y ${index + 1}: `;
+            labelY.textContent = `y-Wert Punkt ${index + 1}: `;
             const inputGroupY = createInputGroup(point.y, (newValue) => updateChartValue(index, newValue, 'y'));
 
             container.appendChild(labelX);
