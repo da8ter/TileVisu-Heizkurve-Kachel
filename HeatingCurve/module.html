@@ -104,7 +104,13 @@
             }
         });
 
+        // Gruppierung für Punkt 1 und 2
         createSharedInputGroup([0, 1], 'y', 'Gruppe 1: Punkte 1 & 2');
+        // Separate Steuerung für Punkt 2
+        createIndividualInputGroup(1, 'y', 'Punkt 2: y-Wert');
+        // Separate Steuerung für Punkt 3
+        createIndividualInputGroup(2, 'y', 'Punkt 3: y-Wert');
+        // Gruppierung für Punkt 3 und 4
         createSharedInputGroup([2, 3], 'y', 'Gruppe 2: Punkte 3 & 4');
 
         function createSharedInputGroup(indices, axis, labelContent) {
@@ -114,6 +120,20 @@
             label.textContent = labelContent;
             const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
                 indices.forEach(i => updateChartValue(i, newValue, axis));
+            });
+
+            container.appendChild(label);
+            container.appendChild(group);
+            controlsContainer.appendChild(container);
+        }
+
+        function createIndividualInputGroup(index, axis, labelContent) {
+            const container = document.createElement('div');
+            container.classList.add('data-point');
+            const label = document.createElement('label');
+            label.textContent = labelContent;
+            const group = createInputGroup(dataPoints[index][axis], (newValue) => {
+                updateChartValue(index, newValue, axis);
             });
 
             container.appendChild(label);
