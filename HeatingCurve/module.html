@@ -10,22 +10,27 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
         canvas {
             flex: 1 0 auto;
             width: 100%;
-            /* Setzen Sie eine feste Höhe oder entfernen Sie die Höheneinstellung, um automatische Anpassung zu vermeiden */
+            max-height: 80vh; /* Begrenzt die Höhe des Canvas, um Platz für Steuerelemente zu schaffen */
         }
         #controls {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             margin: 20px;
         }
         .data-point {
-            margin: 0 10px;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .data-point input {
-            width: 40px;
+        .data-point input, .data-point button {
+            margin: 2px;
         }
     </style>
 </head>
@@ -40,9 +45,7 @@
 
         function resizeCanvas() {
             const body = document.body;
-            // Setzen Sie eine maximale Höhe für das Canvas, um Überläufe zu vermeiden
             canvas.width = body.clientWidth;
-            canvas.style.height = "calc(100% - 60px)"; // Subtrahieren Sie die Höhe der Steuerelemente
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
@@ -90,32 +93,59 @@
         dataPoints.forEach((point, index) => {
             const container = document.createElement('div');
             container.classList.add('data-point');
-            const label = document.createElement('label');
-            label.textContent = `Punkt ${index + 1}: `;
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = point.y;
-            const minusButton = document.createElement('button');
-            minusButton.textContent = '-';
-            minusButton.onclick = () => {
-                input.value = parseInt(input.value) - 1;
-                updateChartValue(index, parseInt(input.value));
+            const labelX = document.createElement('label');
+            labelX.textContent = `x-Wert Punkt ${index + 1}: `;
+            const inputX = document.createElement('input');
+            inputX.type = 'number';
+            inputX.value = point.x;
+            const minusButtonX = document.createElement('button');
+            minusButtonX.textContent = '-';
+            minusButtonX.onclick = () => {
+                inputX.value = parseFloat(inputX.value) - 1;
+                updateChartValue(index, parseFloat(inputX.value), 'x');
             };
-            const plusButton = document.createElement('button');
-            plusButton.textContent = '+';
-            plusButton.onclick = () => {
-                input.value = parseInt(input.value) + 1;
-                updateChartValue(index, parseInt(input.value));
+            const plusButtonX = document.createElement('button');
+            plusButtonX.textContent = '+';
+            plusButtonX.onclick = () => {
+                inputX.value = parseFloat(inputX.value) + 1;
+                updateChartValue(index, parseFloat(inputX.value), 'x');
             };
-            container.appendChild(label);
-            container.appendChild(minusButton);
-            container.appendChild(input);
-            container.appendChild(plusButton);
+
+            const labelY = document.createElement('label');
+            labelY.textContent = `y-Wert Punkt ${index + 1}: `;
+            const inputY = document.createElement('input');
+            inputY.type = 'number';
+            inputY.value = point.y;
+            const minusButtonY = document.createElement('button');
+            minusButtonY.textContent = '-';
+            minusButtonY.onclick = () => {
+                inputY.value = parseInt(inputY.value) - 1;
+                updateChartValue(index, parseInt(inputY.value), 'y');
+            };
+            const plusButtonY = document.createElement('button');
+            plusButtonY.textContent = '+';
+            plusButtonY.onclick = () => {
+                inputY.value = parseInt(inputY.value) + 1;
+                updateChartValue(index, parseInt(inputY.value), 'y');
+            };
+
+            container.appendChild(labelX);
+            container.appendChild(minusButtonX);
+            container.appendChild(inputX);
+            container.appendChild(plusButtonX);
+            container.appendChild(labelY);
+            container.appendChild(minusButtonY);
+            container.appendChild(inputY);
+            container.appendChild(plusButtonY);
             controlsContainer.appendChild(container);
         });
 
-        function updateChartValue(index, newValue) {
-            myChart.data.datasets[0].data[index].y = newValue;
+        function updateChartValue(index, newValue, axis) {
+            if (axis === 'y') {
+                myChart.data.datasets[0].data[index].y = newValue;
+            } else {
+                myChart.data.datasets[0].data[index].x = newValue;
+            }
             myChart.update();
         }
     </script>
