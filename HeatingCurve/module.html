@@ -104,22 +104,22 @@
             }
         });
 
-        dataPoints.forEach((point, index) => {
+        createSharedInputGroup([0, 1], 'y', 'Gruppe 1: Punkte 1 & 2');
+        createSharedInputGroup([2, 3], 'y', 'Gruppe 2: Punkte 3 & 4');
+
+        function createSharedInputGroup(indices, axis, labelContent) {
             const container = document.createElement('div');
             container.classList.add('data-point');
-            const labelX = document.createElement('label');
-            labelX.textContent = `x-Wert Punkt ${index + 1}: `;
-            const inputGroupX = createInputGroup(point.x, (newValue) => updateChartValue(index, newValue, 'x'));
-            const labelY = document.createElement('label');
-            labelY.textContent = `y-Wert Punkt ${index + 1}: `;
-            const inputGroupY = createInputGroup(point.y, (newValue) => updateChartValue(index, newValue, 'y'));
+            const label = document.createElement('label');
+            label.textContent = labelContent;
+            const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
+                indices.forEach(i => updateChartValue(i, newValue, axis));
+            });
 
-            container.appendChild(labelX);
-            container.appendChild(inputGroupX);
-            container.appendChild(labelY);
-            container.appendChild(inputGroupY);
+            container.appendChild(label);
+            container.appendChild(group);
             controlsContainer.appendChild(container);
-        });
+        }
 
         function createInputGroup(initialValue, updateFunction) {
             const group = document.createElement('div');
@@ -148,11 +148,7 @@
         }
 
         function updateChartValue(index, newValue, axis) {
-            if (axis === 'y') {
-                myChart.data.datasets[0].data[index].y = newValue;
-            } else {
-                myChart.data.datasets[0].data[index].x = newValue;
-            }
+            myChart.data.datasets[0].data[index][axis] = newValue;
             myChart.update();
         }
     </script>
