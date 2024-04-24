@@ -4,51 +4,41 @@
     <meta charset="UTF-8">
     <title>Temperaturdiagramm</title>
     <style>
-        /* Ich passe margin vom Body an und überschreibe somit das Standardpadding der Darstellung zu den Seiten */
-        body:before {
-            content: '';
-            display: flex;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-repeat: no-repeat;
-            background-size: cover;
-            opacity: var(--bildtransparenz);
-            background: var(--background-image, none) center / cover no-repeat;
-        }
-
         body {
-            justify-content: center;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .data-point {
+            margin: 0 10px;
+        }
+        .data-point input {
+            width: 40px;
         }
     </style>
 </head>
 <body>
     <canvas id="myChart"></canvas>
+    <div id="controls"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        const dataPoints = [{x: -10, y: 35}, {x: -5, y: 35}, {x: 12, y: 20}, {x: 15, y: 20}];
         const canvas = document.getElementById('myChart');
-        // Stellt die Größe des Canvas korrekt ein
+        const controlsContainer = document.getElementById('controls');
+
         function resizeCanvas() {
-    const body = document.body;
-    canvas.width = body.clientWidth;
-    canvas.height = body.clientHeight;
-}
-
-
+            const body = document.body;
+            canvas.width = body.clientWidth;
+            canvas.height = body.clientHeight;
+        }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas(); // Initial aufrufen, um die Größe beim ersten Laden zu setzen
+        resizeCanvas();
 
         const ctx = canvas.getContext('2d');
         const myChart = new Chart(ctx, {
@@ -56,15 +46,15 @@
             data: {
                 datasets: [{
                     label: 'Temperaturen in °C',
-                    data: [{x: -10, y: 35}, {x: -5, y: 35}, {x: 12, y: 20}, {x: 15, y: 20}],
+                    data: dataPoints,
                     fill: true,
                     borderColor: 'rgb(75, 192, 192)',
                     tension: 0.0
                 }]
             },
             options: {
-                responsive: true, // Chart.js responsives Verhalten aktivieren
-                maintainAspectRatio: false, // Verhindert das Einhalten des Aspektverhältnisses
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
                         type: 'linear',
@@ -90,10 +80,35 @@
             }
         });
 
-        function updateValues(newData) {
-            myChart.data.datasets[0].data = newData.map((value, index) => {
-                return { x: -10 + 30 * index / (newData.length - 1), y: value };
-            });
+        dataPoints.forEach((point, index) => {
+            const container = document.createElement('div');
+            container.classList.add('data-point');
+            const label = document.createElement('label');
+            label.textContent = `Punkt ${index + 1}: `;
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.value = point.y;
+            const minusButton = document.createElement('button');
+            minusButton.textContent = '-';
+            minusButton.onclick = () => {
+                input.value = parseInt(input.value) - 1;
+                updateChartValue(index, parseInt(input.value));
+            };
+            const plusButton = document.createElement('button');
+            plusButton.textContent = '+';
+            plusButton.onclick = () => {
+                input.value = parseInt(input.value) + 1;
+                updateChartValue(index, parseInt(input.value));
+            };
+            container.appendChild(label);
+            container.appendChild(minusButton);
+            container.appendChild(input);
+            container.appendChild(plusButton);
+            controlsContainer.appendChild(container);
+        });
+
+        function updateChartValue(index, newValue) {
+            myChart.data.datasets[0].data[index].y = newValue;
             myChart.update();
         }
     </script>
