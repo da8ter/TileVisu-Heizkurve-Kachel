@@ -105,36 +105,25 @@
             }
         });
 
-        // Wiederherstellung der Steuerelemente für Datenpunkte
-        dataPoints.forEach((point, index) => {
-            createIndividualInputGroup(index, 'x', `x-Wert Punkt ${index + 1}`);
-            createIndividualInputGroup(index, 'y', `y-Wert Punkt ${index + 1}`);
-        });
+        // Gruppensteuerung für y-Werte der Datenpunkte 1 & 2 sowie 3 & 4
+        createSharedInputGroup([0, 1], 'y', 'Gruppe 1: Punkte 1 & 2');
+        createSharedInputGroup([2, 3], 'y', 'Gruppe 2: Punkte 3 & 4');
 
-        function calculateFlowTemperature(currentTemp) {
-            dataPoints.sort((a, b) => a.x - b.x);
-            for (let i = 0; i < dataPoints.length - 1; i++) {
-                if (currentTemp >= dataPoints[i].x && currentTemp <= dataPoints[i + 1].x) {
-                    const x1 = dataPoints[i].x;
-                    const y1 = dataPoints[i].y;
-                    const x2 = dataPoints[i + 1].x;
-                    const y2 = dataPoints[i + 1].y;
-                    return y1 + (y2 - y1) * (currentTemp - x1) / (x2 - x1);
-                }
-            }
-            return "Außerhalb des bekannten Bereichs";
-        }
+        // Individual control setup for x values for points 2 and 3
+        createIndividualInputGroup(1, 'x', 'x-Wert Punkt 2');
+        createIndividualInputGroup(2, 'x', 'x-Wert Punkt 3');
 
-        function setupCurrentTempControl() {
+        function createSharedInputGroup(indices, axis, labelContent) {
             const container = document.createElement('div');
-            container.id = 'currentTempControl';
+            container.classList.add('data-point');
             const label = document.createElement('label');
-            label.textContent = 'Aktuelle Außentemperatur: ' + currentOutsideTemp + ' °C';
-            const requiredTemp = calculateFlowTemperature(currentOutsideTemp);
-            const tempDisplay = document.createElement('p');
-            tempDisplay.textContent = 'Benötigte Vorlauftemperatur: ' + requiredTemp + ' °C';
+            label.textContent = labelContent;
+            const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
+                indices.forEach(i => updateChartValue(i, newValue, axis));
+            });
+
             container.appendChild(label);
-            container.appendChild(tempDisplay);
+            container.appendChild(group);
             controlsContainer.appendChild(container);
         }
 
@@ -143,9 +132,7 @@
             container.classList.add('data-point');
             const label = document.createElement('label');
             label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[index][axis], (newValue) => {
-                updateChartValue(index, newValue, axis);
-            });
+            const group = createInputGroup(dataPoints[index][axis], (newValue) => updateChartValue(index, newValue, axis));
 
             container.appendChild(label);
             container.appendChild(group);
@@ -181,6 +168,34 @@
         function updateChartValue(index, newValue, axis) {
             myChart.data.datasets[0].data[index][axis] = newValue;
             myChart.update();
+        }
+
+        // Setup for displaying current outside temperature and calculated flow temperature
+        function setupCurrentTempControl() {
+            const container = document.createElement('div');
+            container.id = 'currentTempControl';
+            const label = document.createElement('label');
+            label.textContent = 'Aktuelle Außentemperatur: ' + currentOutsideTemp + ' °C';
+            const requiredTemp = calculateFlowTemperature(currentOutsideTemp);
+            const tempDisplay = document.createElement('p');
+            tempDisplay.textContent = 'Benötigte Vorlauftemperatur: ' + requiredTemp + ' °C';
+            container.appendChild(label);
+            container.appendChild(tempDisplay);
+            controlsContainer.appendChild(container);
+        }
+
+        function calculateFlowTemperature(currentTemp) {
+            dataPoints.sort((a, b) => a.x - b.x);
+            for (let i = 0; i < dataPoints.length - 1; i++) {
+                if (currentTemp >= dataPoints[i].x && currentTemp <= dataPoints[i + 1].x) {
+                    const x1 = dataPoints[i].x;
+                    const y1 = dataPoints[i].y;
+                    const x2 = dataPoints[i + 1].x;
+                    const y2 = dataPoints[i + 1].y;
+                    return y1 + (y2 - y1) * (currentTemp - x1) / (x2 - x1);
+                }
+            }
+            return "Außerhalb des bekannten Bereichs";
         }
 
         setupCurrentTempControl();
