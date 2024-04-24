@@ -23,24 +23,24 @@
             justify-content: center;
             margin: 20px;
         }
-        .data-point {
+        .data-point, #currentTempControl {
             margin: 10px;
             display: flex;
             flex-direction: column; /* Anordnung der Steuerelemente in einer vertikalen Spalte */
             align-items: center;
         }
-        .data-point label {
+        .data-point label, #currentTempControl label {
             margin-right: 5px; /* Abstand zwischen Label und Steuerelementen */
         }
         .input-group {
             display: flex; /* Flex-Container für Buttons und Eingabefeld */
             margin-bottom: 10px; /* Abstand zwischen den x- und y-Eingabegruppen */
         }
-        .data-point input {
+        .data-point input, #currentTempControl input {
             width: 50px; /* Setzt die Breite der Eingabefelder auf 50px */
             text-align: center; /* Zentriert den Text im Eingabefeld */
         }
-        .data-point button {
+        .data-point button, #currentTempControl button {
             width: 25px; /* Setzt die Breite der Buttons */
             height: 25px; /* Setzt die Höhe der Buttons */
             padding: 0; /* Entfernt Padding von den Buttons */
@@ -104,67 +104,42 @@
             }
         });
 
-        createSharedInputGroup([0, 1], 'y', 'Gruppe 1: Punkte 1 & 2');
-        createSharedInputGroup([2, 3], 'y', 'Gruppe 2: Punkte 3 & 4');
-        createIndividualInputGroup(1, 'x', 'x-Wert Punkt 2');
-        createIndividualInputGroup(2, 'x', 'x-Wert Punkt 3');
-
-        function createSharedInputGroup(indices, axis, labelContent) {
-            const container = document.createElement('div');
-            container.classList.add('data-point');
-            const label = document.createElement('label');
-            label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
-                indices.forEach(i => updateChartValue(i, newValue, axis));
-            });
-
-            container.appendChild(label);
-            container.appendChild(group);
-            controlsContainer.appendChild(container);
+        function calculateFlowTemperature(currentTemp) {
+            dataPoints.sort((a, b) => a.x - b.x);
+            for (let i = 0; i < dataPoints.length - 1; i++) {
+                if (currentTemp >= dataPoints[i].x && currentTemp <= dataPoints[i + 1].x) {
+                    const x1 = dataPoints[i].x;
+                    const y1 = dataPoints[i].y;
+                    const x2 = dataPoints[i + 1].x;
+                    const y2 = dataPoints[i + 1].y;
+                    return y1 + (y2 - y1) * (currentTemp - x1) / (x2 - x1);
+                }
+            }
+            return "Außerhalb des bekannten Bereichs";
         }
 
-        function createIndividualInputGroup(index, axis, labelContent) {
+        function setupCurrentTempControl() {
             const container = document.createElement('div');
-            container.classList.add('data-point');
+            container.id = 'currentTempControl';
             const label = document.createElement('label');
-            label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[index][axis], (newValue) => updateChartValue(index, newValue, axis));
-
-            container.appendChild(label);
-            container.appendChild(group);
-            controlsContainer.appendChild(container);
-        }
-
-        function createInputGroup(initialValue, updateFunction) {
-            const group = document.createElement('div');
-            group.className = 'input-group';
-            const minusButton = document.createElement('button');
-            minusButton.textContent = '-';
-            minusButton.onclick = () => {
-                const newValue = parseFloat(input.value) - 1;
-                input.value = newValue;
-                updateFunction(newValue);
-            };
+            label.textContent = 'Aktuelle Außentemperatur:';
             const input = document.createElement('input');
             input.type = 'number';
-            input.value = initialValue;
-            const plusButton = document.createElement('button');
-            plusButton.textContent = '+';
-            plusButton.onclick = () => {
-                const newValue = parseFloat(input.value) + 1;
-                input.value = newValue;
-                updateFunction(newValue);
+            input.value = 0;
+            const button = document.createElement('button');
+            button.textContent = 'Berechnen';
+            button.onclick = () => {
+                const currentTemp = parseFloat(input.value);
+                const requiredTemp = calculateFlowTemperature(currentTemp);
+                alert('Benötigte Vorlauftemperatur: ' + requiredTemp);
             };
-            group.appendChild(minusButton);
-            group.appendChild(input);
-            group.appendChild(plusButton);
-            return group;
+            container.appendChild(label);
+            container.appendChild(input);
+            container.appendChild(button);
+            controlsContainer.appendChild(container);
         }
 
-        function updateChartValue(index, newValue, axis) {
-            myChart.data.datasets[0].data[index][axis] = newValue;
-            myChart.update();
-        }
+        setupCurrentTempControl();
     </script>
 </body>
 </html>
