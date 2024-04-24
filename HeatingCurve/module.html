@@ -106,10 +106,10 @@
             const container = document.createElement('div');
             container.classList.add('data-point');
             const labelX = document.createElement('label');
-            labelX.textContent = `x-Wert Punkt ${index + 1}: `;
+            labelX.textContent = `x ${index + 1}: `;
             const inputGroupX = createInputGroup(point.x, (newValue) => updateChartValue(index, newValue, 'x'));
             const labelY = document.createElement('label');
-            labelY.textContent = `y-Wert Punkt ${index + 1}: `;
+            labelY.textContent = `y ${index + 1}: `;
             const inputGroupY = createInputGroup(point.y, (newValue) => updateChartValue(index, newValue, 'y'));
 
             container.appendChild(labelX);
