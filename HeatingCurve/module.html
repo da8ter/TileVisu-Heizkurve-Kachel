@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <title>Temperaturdiagramm</title>
     <style>
-        body {
+        body, html {
+            height: 100%;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+        }
+        canvas {
+            flex: 1 0 auto;
+            width: 100%;
+            /* Setzen Sie eine feste Höhe oder entfernen Sie die Höheneinstellung, um automatische Anpassung zu vermeiden */
         }
         #controls {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin: 20px;
         }
         .data-point {
             margin: 0 10px;
@@ -34,8 +40,9 @@
 
         function resizeCanvas() {
             const body = document.body;
+            // Setzen Sie eine maximale Höhe für das Canvas, um Überläufe zu vermeiden
             canvas.width = body.clientWidth;
-            canvas.height = body.clientHeight;
+            canvas.style.height = "calc(100% - 60px)"; // Subtrahieren Sie die Höhe der Steuerelemente
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
