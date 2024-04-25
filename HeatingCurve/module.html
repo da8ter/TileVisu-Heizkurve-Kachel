@@ -14,7 +14,7 @@
         canvas {
             flex: 1 0 auto;
             width: 100%;
-            max-height: 55vh; /* Begrenzt die Höhe des Canvas, um Platz für Steuerelemente zu schaffen */
+            max-height: 55vh;
         }
         #controls {
             display: flex;
@@ -25,25 +25,25 @@
         .data-point, #currentTempControl {
             margin: 10px;
             display: flex;
-            flex-direction: column; /* Anordnung der Steuerelemente in einer vertikalen Spalte */
+            flex-direction: column;
             align-items: center;
         }
         .data-point label, #currentTempControl label {
-            margin-right: 5px; /* Abstand zwischen Label und Steuerelementen */
+            margin-right: 5px;
         }
         .input-group {
-            display: flex; /* Flex-Container für Buttons und Eingabefeld */
-            margin-bottom: 10px; /* Abstand zwischen den x- und y-Eingabegruppen */
+            display: flex;
+            margin-bottom: 10px;
         }
         .data-point input, #currentTempControl input {
-            width: 50px; /* Setzt die Breite der Eingabefelder auf 50px */
-            text-align: center; /* Zentriert den Text im Eingabefeld */
+            width: 50px;
+            text-align: center;
         }
         .data-point button, #currentTempControl button {
-            width: 25px; /* Setzt die Breite der Buttons */
-            height: 25px; /* Setzt die Höhe der Buttons */
-            padding: 0; /* Entfernt Padding von den Buttons */
-            line-height: 25px; /* Stellt sicher, dass der Text vertikal zentriert ist */
+            width: 25px;
+            height: 25px;
+            padding: 0;
+            line-height: 25px;
         }
     </style>
 </head>
@@ -52,13 +52,11 @@
     <div id="controls"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Einzelne Variablen für die X- und Y-Werte
         const x1 = -10, y1 = 35;
         const x2 = -5, y2 = 35;
         const x3 = 12, y3 = 20;
         const x4 = 15, y4 = 20;
 
-        // Erstellen von Datenpunkten
         const dataPoints = [
             {x: x1, y: y1},
             {x: x2, y: y2},
@@ -67,14 +65,15 @@
         ];
         const canvas = document.getElementById('myChart');
         const controlsContainer = document.getElementById('controls');
-        let currentOutsideTemp = -4; // Beispielvariable für die aktuelle Außentemperatur
+        let currentOutsideTemp = -4;
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
         function resizeCanvas() {
             const body = document.body;
             canvas.width = body.clientWidth;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
         const ctx = canvas.getContext('2d');
         const myChart = new Chart(ctx, {
@@ -116,11 +115,8 @@
             }
         });
 
-        // Gruppensteuerung für y-Werte der Datenpunkte 1 & 2 sowie 3 & 4
         createSharedInputGroup([0, 1], 'y', 'Min. Vorlauf');
         createSharedInputGroup([2, 3], 'y', 'Max. Vorlauf');
-
-        // Individual control setup for x values for points 2 and 3
         createIndividualInputGroup(1, 'x', 'Ende');
         createIndividualInputGroup(2, 'x', 'Start');
 
@@ -130,7 +126,7 @@
             const label = document.createElement('label');
             label.textContent = labelContent;
             const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
-                indices.forEach(i => updateChartValue(i, newValue, axis));
+                updateAllValues(indices, newValue, axis);
             });
 
             container.appendChild(label);
@@ -143,7 +139,9 @@
             container.classList.add('data-point');
             const label = document.createElement('label');
             label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[index][axis], (newValue) => updateChartValue(index, newValue, axis));
+            const group = createInputGroup(dataPoints[index][axis], (newValue) => {
+                updateAllValues([index], newValue, axis);
+            });
 
             container.appendChild(label);
             container.appendChild(group);
@@ -176,20 +174,16 @@
             return group;
         }
 
-        function updateChartValue(index, newValue, axis) {
-            myChart.data.datasets[0].data[index][axis] = newValue;
+        function updateAllValues(indices, newValue, axis) {
+            indices.forEach(i => {
+                myChart.data.datasets[0].data[i][axis] = newValue;
+            });
             myChart.update();
         }
-        function updatePointValue(index, axis, newValue) {
-            if (axis === 'x') {
-                dataPoints[index].x = newValue;
-            } else {
-                dataPoints[index].y = newValue;
-            }
-            myChart.update();
-            updateCurrentTempControl();
-        }
-        // Setup for displaying current outside temperature and calculated flow temperature
+
+        setupCurrentTempControl();
+        addCurrentTemperatureMarker(currentOutsideTemp);
+
         function setupCurrentTempControl() {
             const container = document.createElement('div');
             container.id = 'currentTempControl';
@@ -217,26 +211,19 @@
             return "Außerhalb des bekannten Bereichs";
         }
 
-        setupCurrentTempControl();
-
-        // Zusätzlicher Code, um die aktuelle Vorlauftemperatur im Diagramm zu markieren
-function addCurrentTemperatureMarker(currentTemp) {
-    const flowTemp = calculateFlowTemperature(currentTemp); // Berechnet die Vorlauftemperatur basierend auf der aktuellen Außentemperatur
-    const currentTempMarker = {
-        label: 'Aktuelle Temperatur',
-        data: [{x: currentTemp, y: flowTemp}],
-        borderColor: 'rgb(255, 99, 132)', // Rote Farbe für die Markierung
-        backgroundColor: 'rgb(255, 99, 132)', // Roter Hintergrund
-        pointRadius: 5, // Größe des Markierungspunkts
-        pointStyle: 'circle' // Form des Markierungspunkts
-    };
-    myChart.data.datasets.push(currentTempMarker); // Fügt den neuen Datensatz zum Diagramm hinzu
-    myChart.update(); // Aktualisiert das Diagramm, um den neuen Punkt anzuzeigen
-}
-
-// Funktionaufruf, um die aktuelle Temperaturmarkierung hinzuzufügen
-addCurrentTemperatureMarker(currentOutsideTemp);
-
+        function addCurrentTemperatureMarker(currentTemp) {
+            const flowTemp = calculateFlowTemperature(currentTemp);
+            const currentTempMarker = {
+                label: 'Aktuelle Temperatur',
+                data: [{x: currentTemp, y: flowTemp}],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(255, 99, 132)',
+                pointRadius: 5,
+                pointStyle: 'circle'
+            };
+            myChart.data.datasets.push(currentTempMarker);
+            myChart.update();
+        }
     </script>
 </body>
 </html>
