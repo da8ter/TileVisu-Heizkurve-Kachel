@@ -52,21 +52,16 @@
     <div id="controls"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const x1 = -10, y1 = 35;
-        const x2 = -5, y2 = 35;
-        const x3 = 12, y3 = 20;
-        const x4 = 15, y4 = 20;
-
         const dataPoints = [
-            {x: x1, y: y1},
-            {x: x2, y: y2},
-            {x: x3, y: y3},
-            {x: x4, y: y4}
+            {x: -10, y: 35},
+            {x: -5, y: 35},
+            {x: 12, y: 20},
+            {x: 15, y: 20}
         ];
-        const canvas = document.getElementById('myChart');
-        const controlsContainer = document.getElementById('controls');
         let currentOutsideTemp = -4;
 
+        const canvas = document.getElementById('myChart');
+        const controlsContainer = document.getElementById('controls');
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
@@ -116,6 +111,7 @@
         });
 
         setupControls();
+        addCurrentTemperatureMarker(currentOutsideTemp); // Initialisiert den Marker beim Laden der Seite
 
         function setupControls() {
             createSharedInputGroup([0, 1], 'y', 'Min. Vorlauf');
@@ -125,111 +121,37 @@
             setupCurrentTempControl();
         }
 
-        function createSharedInputGroup(indices, axis, labelContent) {
-            const container = document.createElement('div');
-            container.classList.add('data-point');
-            const label = document.createElement('label');
-            label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[indices[0]][axis], (newValue) => {
-                updateAllValues(indices, newValue, axis);
-            });
-
-            container.appendChild(label);
-            container.appendChild(group);
-            controlsContainer.appendChild(container);
-        }
-
-        function createIndividualInputGroup(index, axis, labelContent) {
-            const container = document.createElement('div');
-            container.classList.add('data-point');
-            const label = document.createElement('label');
-            label.textContent = labelContent;
-            const group = createInputGroup(dataPoints[index][axis], (newValue) => {
-                updateAllValues([index], newValue, axis);
-            });
-
-            container.appendChild(label);
-            container.appendChild(group);
-            controlsContainer.appendChild(container);
-        }
-
-        function createInputGroup(initialValue, updateFunction) {
-            const group = document.createElement('div');
-            group.className = 'input-group';
-            const minusButton = document.createElement('button');
-            minusButton.textContent = '-';
-            minusButton.onclick = () => {
-                const newValue = parseFloat(input.value) - 1;
-                input.value = newValue;
-                updateFunction(newValue);
+        function addCurrentTemperatureMarker(currentTemp) {
+            const flowTemp = calculateFlowTemperature(currentTemp);
+            const currentTempMarker = {
+                label: 'Aktuelle Temperatur',
+                data: [{x: currentTemp, y: flowTemp}],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(255, 99, 132)',
+                pointRadius: 5,
+                pointStyle: 'circle'
             };
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.value = initialValue;
-            const plusButton = document.createElement('button');
-            plusButton.textContent = '+';
-            plusButton.onclick = () => {
-                const newValue = parseFloat(input.value) + 1;
-                input.value = newValue;
-                updateFunction(newValue);
-            };
-            group.appendChild(minusButton);
-            group.appendChild(input);
-            group.appendChild(plusButton);
-            return group;
+            myChart.data.datasets.push(currentTempMarker);
+            myChart.update();
         }
 
         function updateAllValues(indices, newValue, axis) {
             indices.forEach(i => {
                 myChart.data.datasets[0].data[i][axis] = newValue;
             });
-            updateCurrentTemperatureMarker(currentOutsideTemp); // Aktualisiert die Markierung für die aktuelle Temperatur
+            updateCurrentTemperatureMarker(currentOutsideTemp); // Aktualisiert den Marker und andere Werte bei jeder Änderung
             myChart.update();
-        }
-
-        function setupCurrentTempControl() {
-            const container = document.createElement('div');
-            container.id = 'currentTempControl';
-            const label = document.createElement('label');
-            label.textContent = 'Aktuelle Außentemperatur: ' + currentOutsideTemp + ' °C';
-            const tempDisplay = document.createElement('p');
-            tempDisplay.textContent = 'Benötigte Vorlauftemperatur: ' + calculateFlowTemperature(currentOutsideTemp) + ' °C';
-            container.appendChild(label);
-            container.appendChild(tempDisplay);
-            controlsContainer.appendChild(container);
-        }
-
-        function calculateFlowTemperature(currentTemp) {
-            dataPoints.sort((a, b) => a.x - b.x);
-            for (let i = 0; i < dataPoints.length - 1; i++) {
-                if (currentTemp >= dataPoints[i].x && currentTemp <= dataPoints[i + 1].x) {
-                    const x1 = dataPoints[i].x;
-                    const y1 = dataPoints[i].y;
-                    const x2 = dataPoints[i + 1].x;
-                    const y2 = dataPoints[i + 1].y;
-                    return y1 + (y2 - y1) * (currentTemp - x1) / (x2 - x1);
-                }
-            }
-            return "Außerhalb des bekannten Bereichs";
         }
 
         function updateCurrentTemperatureMarker(currentTemp) {
             const flowTemp = calculateFlowTemperature(currentTemp);
             const currentTempMarker = myChart.data.datasets.find(d => d.label === 'Aktuelle Temperatur');
-            if (!currentTempMarker) {
-                myChart.data.datasets.push({
-                    label: 'Aktuelle Temperatur',
-                    data: [{x: currentTemp, y: flowTemp}],
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    pointRadius: 5,
-                    pointStyle: 'circle'
-                });
-            } else {
+            if (currentTempMarker) {
                 currentTempMarker.data[0] = {x: currentTemp, y: flowTemp};
+            } else {
+                addCurrentTemperatureMarker(currentTemp);
             }
             document.getElementById('currentTempControl').children[1].textContent = 'Benötigte Vorlauftemperatur: ' + flowTemp + ' °C';
-            myChart.update();
         }
     </script>
 </body>
