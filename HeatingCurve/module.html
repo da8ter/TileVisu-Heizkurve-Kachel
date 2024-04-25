@@ -198,6 +198,25 @@
         }
 
         setupCurrentTempControl();
+
+        // Zusätzlicher Code, um die aktuelle Vorlauftemperatur im Diagramm zu markieren
+function addCurrentTemperatureMarker(currentTemp) {
+    const flowTemp = calculateFlowTemperature(currentTemp); // Berechnet die Vorlauftemperatur basierend auf der aktuellen Außentemperatur
+    const currentTempMarker = {
+        label: 'Aktuelle Temperatur',
+        data: [{x: currentTemp, y: flowTemp}],
+        borderColor: 'rgb(255, 99, 132)', // Rote Farbe für die Markierung
+        backgroundColor: 'rgb(255, 99, 132)', // Roter Hintergrund
+        pointRadius: 5, // Größe des Markierungspunkts
+        pointStyle: 'circle' // Form des Markierungspunkts
+    };
+    myChart.data.datasets.push(currentTempMarker); // Fügt den neuen Datensatz zum Diagramm hinzu
+    myChart.update(); // Aktualisiert das Diagramm, um den neuen Punkt anzuzeigen
+}
+
+// Funktionaufruf, um die aktuelle Temperaturmarkierung hinzuzufügen
+addCurrentTemperatureMarker(currentOutsideTemp);
+
     </script>
 </body>
 </html>
