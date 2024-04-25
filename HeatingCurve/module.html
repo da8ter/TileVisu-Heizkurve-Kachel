@@ -117,12 +117,12 @@
         });
 
         // Gruppensteuerung für y-Werte der Datenpunkte 1 & 2 sowie 3 & 4
-        createSharedInputGroup([0, 1], 'y', 'Gruppe 1: Punkte 1 & 2');
-        createSharedInputGroup([2, 3], 'y', 'Gruppe 2: Punkte 3 & 4');
+        createSharedInputGroup([0, 1], 'y', 'Min. Vorlauf');
+        createSharedInputGroup([2, 3], 'y', 'Max. Vorlauf');
 
         // Individual control setup for x values for points 2 and 3
-        createIndividualInputGroup(1, 'x', 'x-Wert Punkt 2');
-        createIndividualInputGroup(2, 'x', 'x-Wert Punkt 3');
+        createIndividualInputGroup(1, 'x', 'Ende');
+        createIndividualInputGroup(2, 'x', 'Start');
 
         function createSharedInputGroup(indices, axis, labelContent) {
             const container = document.createElement('div');
