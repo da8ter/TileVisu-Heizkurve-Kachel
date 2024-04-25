@@ -8,7 +8,6 @@ class TileVisuHeatingCurveTile extends IPSModule
 
         // Drei Eigenschaften für die dargestellten Zähler
         $this->RegisterPropertyInteger("bgImage", 0);
-        $this->RegisterPropertyInteger("Variable", 0);
         $this->RegisterPropertyFloat('Schriftgroesse', 1);
         $this->RegisterPropertyFloat('Bildtransparenz', 0.7);
         $this->RegisterPropertyInteger('Kachelhintergrundfarbe', 0x000000);
@@ -30,7 +29,6 @@ class TileVisuHeatingCurveTile extends IPSModule
                 //Referenzen Registrieren
                 $ids = [
                     $this->ReadPropertyInteger('bgImage'),
-                    $this->ReadPropertyInteger('Variable')
                 ];
                 $refs = $this->GetReferenceList();
                     foreach($refs as $ref) {
@@ -52,7 +50,7 @@ class TileVisuHeatingCurveTile extends IPSModule
         }
 
 
-        foreach (['bgImage', 'Variable'] as $VariableProperty)        {
+        foreach (['bgImage'] as $VariableProperty)        {
             $this->RegisterMessage($this->ReadPropertyInteger($VariableProperty), VM_UPDATE);
         }
 
@@ -63,7 +61,7 @@ class TileVisuHeatingCurveTile extends IPSModule
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
     {
 
-        foreach (['bgImage', 'Variable'] as $index => $VariableProperty)
+        foreach (['bgImage'] as $index => $VariableProperty)
         {
             if ($SenderID === $this->ReadPropertyInteger($VariableProperty))
             {
@@ -84,22 +82,24 @@ class TileVisuHeatingCurveTile extends IPSModule
         // Füge ein Skript hinzu, um beim Laden, analog zu Änderungen bei Laufzeit, die Werte zu setzen
         $initialHandling = '<script>handleMessage(' . json_encode($this->GetFullUpdateMessage()) . ')</script>';
 
+        $settings = '<script type="text/javascript">';
+        $settings .= 'var minvorlauf = ' . $this->ReadPropertyString('MinVorlauf') . ';';
+        $settings .= 'var maxvorlauf = ' . $this->ReadPropertyString('MaxVorlauf') . ';';
+        $settings .= 'var minaussentemperatur = ' . $this->ReadPropertyString('MinAussentemperatur') . ';';
+        $settings .= 'var maxaussentemperatur = ' . $this->ReadPropertyString('MaxAussentemperatur') . ';';
+        $settings .= '</script>';
+
         // Füge statisches HTML aus Datei hinzu
         $module = file_get_contents(__DIR__ . '/module.html');
 
         // Gebe alles zurück.
         // Wichtig: $initialHandling nach hinten, da die Funktion handleMessage erst im HTML definiert wird
-        return $module . $initialHandling;
+        return $settings . $module . $initialHandling;
     }
 
     // Generiere eine Nachricht, die alle Elemente in der HTML-Darstellung aktualisiert
     private function GetFullUpdateMessage()
     {
-        $VariableID = $this->ReadPropertyInteger('Variable');
-        $VariableExists = IPS_VariableExists($VariableID);
-        $result = [
-            'Variable' => $VariableExists
-        ];
         $result['fontsize'] = $this->ReadPropertyFloat('Schriftgroesse');
         $result['hintergrundfarbe'] = '#' . sprintf('%06X', $this->ReadPropertyInteger('Kachelhintergrundfarbe'));
         $result['schriftfarbe'] = '#' . sprintf('%06X', $this->ReadPropertyInteger('Schriftfarbe'));
@@ -110,11 +110,6 @@ class TileVisuHeatingCurveTile extends IPSModule
         $result['maxaussentemperatur'] = $this->ReadPropertyFloat('MaxAussentemperatur');
 
 
-
-        if ($VariableExists)
-        {
-            $result['variable'] = GetValueFormatted($VariableID);
-        }
             // Prüfe vorweg, ob ein Bild ausgewählt wurde
             $imageID = $this->ReadPropertyInteger('bgImage');
             if (IPS_MediaExists($imageID))
