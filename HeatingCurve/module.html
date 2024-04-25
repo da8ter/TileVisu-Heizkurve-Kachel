@@ -180,7 +180,15 @@
             myChart.data.datasets[0].data[index][axis] = newValue;
             myChart.update();
         }
-
+        function updatePointValue(index, axis, newValue) {
+            if (axis === 'x') {
+                dataPoints[index].x = newValue;
+            } else {
+                dataPoints[index].y = newValue;
+            }
+            myChart.update();
+            updateCurrentTempControl();
+        }
         // Setup for displaying current outside temperature and calculated flow temperature
         function setupCurrentTempControl() {
             const container = document.createElement('div');
