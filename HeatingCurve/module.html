@@ -115,10 +115,15 @@
             }
         });
 
-        createSharedInputGroup([0, 1], 'y', 'Min. Vorlauf');
-        createSharedInputGroup([2, 3], 'y', 'Max. Vorlauf');
-        createIndividualInputGroup(1, 'x', 'Ende');
-        createIndividualInputGroup(2, 'x', 'Start');
+        setupControls();
+
+        function setupControls() {
+            createSharedInputGroup([0, 1], 'y', 'Min. Vorlauf');
+            createSharedInputGroup([2, 3], 'y', 'Max. Vorlauf');
+            createIndividualInputGroup(1, 'x', 'Ende');
+            createIndividualInputGroup(2, 'x', 'Start');
+            setupCurrentTempControl();
+        }
 
         function createSharedInputGroup(indices, axis, labelContent) {
             const container = document.createElement('div');
@@ -178,20 +183,17 @@
             indices.forEach(i => {
                 myChart.data.datasets[0].data[i][axis] = newValue;
             });
+            updateCurrentTemperatureMarker(currentOutsideTemp); // Aktualisiert die Markierung für die aktuelle Temperatur
             myChart.update();
         }
-
-        setupCurrentTempControl();
-        addCurrentTemperatureMarker(currentOutsideTemp);
 
         function setupCurrentTempControl() {
             const container = document.createElement('div');
             container.id = 'currentTempControl';
             const label = document.createElement('label');
             label.textContent = 'Aktuelle Außentemperatur: ' + currentOutsideTemp + ' °C';
-            const requiredTemp = calculateFlowTemperature(currentOutsideTemp);
             const tempDisplay = document.createElement('p');
-            tempDisplay.textContent = 'Benötigte Vorlauftemperatur: ' + requiredTemp + ' °C';
+            tempDisplay.textContent = 'Benötigte Vorlauftemperatur: ' + calculateFlowTemperature(currentOutsideTemp) + ' °C';
             container.appendChild(label);
             container.appendChild(tempDisplay);
             controlsContainer.appendChild(container);
@@ -211,17 +213,22 @@
             return "Außerhalb des bekannten Bereichs";
         }
 
-        function addCurrentTemperatureMarker(currentTemp) {
+        function updateCurrentTemperatureMarker(currentTemp) {
             const flowTemp = calculateFlowTemperature(currentTemp);
-            const currentTempMarker = {
-                label: 'Aktuelle Temperatur',
-                data: [{x: currentTemp, y: flowTemp}],
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgb(255, 99, 132)',
-                pointRadius: 5,
-                pointStyle: 'circle'
-            };
-            myChart.data.datasets.push(currentTempMarker);
+            const currentTempMarker = myChart.data.datasets.find(d => d.label === 'Aktuelle Temperatur');
+            if (!currentTempMarker) {
+                myChart.data.datasets.push({
+                    label: 'Aktuelle Temperatur',
+                    data: [{x: currentTemp, y: flowTemp}],
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    pointRadius: 5,
+                    pointStyle: 'circle'
+                });
+            } else {
+                currentTempMarker.data[0] = {x: currentTemp, y: flowTemp};
+            }
+            document.getElementById('currentTempControl').children[1].textContent = 'Benötigte Vorlauftemperatur: ' + flowTemp + ' °C';
             myChart.update();
         }
     </script>
