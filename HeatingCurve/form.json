@@ -42,6 +42,43 @@
             "caption": "Font color"
         },
         {
+            "type": "NumberSpinner",
+            "name": "MinVorlauf",
+            "caption": "Minimaler Vorlauf",
+            "digits": 1,
+            "minimum": 0.0,
+            "maximum": 50.0,
+            "suffix": "°C"
+        },        
+        {
+            "type": "NumberSpinner",
+            "name": "MaxVorlauf",
+            "caption": "Maximaler Vorlauf",
+            "digits": 1,
+            "minimum": 0.0,
+            "maximum": 50.0,
+            "suffix": "°C"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "MinAussentemperatur",
+            "caption": "Minimale Außentemperatur",
+            "digits": 1,
+            "minimum": 0.0,
+            "maximum": 50.0,
+            "suffix": "°C"
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "MaxAussentemperatur",
+            "caption": "Maximale Außentemperatur",
+            "digits": 1,
+            "minimum": 0.0,
+            "maximum": 50.0,
+            "suffix": "°C"
+        },
+
+        {
             "type": "Label",
             "caption": ""
         },

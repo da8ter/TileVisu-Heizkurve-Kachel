@@ -13,6 +13,10 @@ class TileVisuHeatingCurveTile extends IPSModule
         $this->RegisterPropertyFloat('Bildtransparenz', 0.7);
         $this->RegisterPropertyInteger('Kachelhintergrundfarbe', 0x000000);
         $this->RegisterPropertyInteger('Schriftfarbe', 0xFFFFFF);
+        $this->RegisterPropertyFloat('MinVorlauf', 20);
+        $this->RegisterPropertyFloat('MaxVorlauf', 50);
+        $this->RegisterPropertyFloat('MinAussentemperatur', -10);
+        $this->RegisterPropertyFloat('MaxAussentemperatur', 15);
 
         // Visualisierungstyp auf 1 setzen, da wir HTML anbieten möchten
         $this->SetVisualizationType(1);
