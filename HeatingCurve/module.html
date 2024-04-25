@@ -52,7 +52,19 @@
     <div id="controls"></div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const dataPoints = [{x: -10, y: 35}, {x: -5, y: 35}, {x: 12, y: 20}, {x: 15, y: 20}];
+        // Einzelne Variablen für die X- und Y-Werte
+        const x1 = -10, y1 = 35;
+        const x2 = -5, y2 = 35;
+        const x3 = 12, y3 = 20;
+        const x4 = 15, y4 = 20;
+
+        // Erstellen von Datenpunkten
+        const dataPoints = [
+            {x: x1, y: y1},
+            {x: x2, y: y2},
+            {x: x3, y: y3},
+            {x: x4, y: y4}
+        ];
         const canvas = document.getElementById('myChart');
         const controlsContainer = document.getElementById('controls');
         let currentOutsideTemp = -4; // Beispielvariable für die aktuelle Außentemperatur
