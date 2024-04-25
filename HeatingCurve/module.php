@@ -83,10 +83,10 @@ class TileVisuHeatingCurveTile extends IPSModule
         $initialHandling = '<script>handleMessage(' . json_encode($this->GetFullUpdateMessage()) . ')</script>';
 
         $settings = '<script type="text/javascript">';
-        $settings .= 'var minvorlauf = ' . $this->ReadPropertyString('MinVorlauf') . ';';
-        $settings .= 'var maxvorlauf = ' . $this->ReadPropertyString('MaxVorlauf') . ';';
-        $settings .= 'var minaussentemperatur = ' . $this->ReadPropertyString('MinAussentemperatur') . ';';
-        $settings .= 'var maxaussentemperatur = ' . $this->ReadPropertyString('MaxAussentemperatur') . ';';
+        $settings .= 'var minvorlauf = ' . $this->ReadPropertyFloat('MinVorlauf') . ';';
+        $settings .= 'var maxvorlauf = ' . $this->ReadPropertyFloat('MaxVorlauf') . ';';
+        $settings .= 'var minaussentemperatur = ' . $this->ReadPropertyFloat('MinAussentemperatur') . ';';
+        $settings .= 'var maxaussentemperatur = ' . $this->ReadPropertyFloat('MaxAussentemperatur') . ';';
         $settings .= '</script>';
 
         // Füge statisches HTML aus Datei hinzu
