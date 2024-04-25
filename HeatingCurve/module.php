@@ -104,6 +104,13 @@ class TileVisuHeatingCurveTile extends IPSModule
         $result['hintergrundfarbe'] = '#' . sprintf('%06X', $this->ReadPropertyInteger('Kachelhintergrundfarbe'));
         $result['schriftfarbe'] = '#' . sprintf('%06X', $this->ReadPropertyInteger('Schriftfarbe'));
         $result['transparenz'] = $this->ReadPropertyFloat('Bildtransparenz');
+        $result['minvorlauf'] = $this->ReadPropertyFloat('MinVorlauf');
+        $result['maxvorlauf'] = $this->ReadPropertyFloat('MaxVorlauf');
+        $result['minaussentemperatur'] = $this->ReadPropertyFloat('MinAussentemperatur');
+        $result['maxaussentemperatur'] = $this->ReadPropertyFloat('MaxAussentemperatur');
+
+
+
         if ($VariableExists)
         {
             $result['variable'] = GetValueFormatted($VariableID);
