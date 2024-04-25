@@ -114,7 +114,6 @@
                 }
             }
         });
-        updateCurrentTemperatureMarker(currentOutsideTemp); // Aktualisiert die Markierung für die aktuelle Temperatur
 
         setupControls();
 
@@ -232,6 +231,8 @@
             document.getElementById('currentTempControl').children[1].textContent = 'Benötigte Vorlauftemperatur: ' + flowTemp + ' °C';
             myChart.update();
         }
+        updateCurrentTemperatureMarker(currentOutsideTemp); // Aktualisiert die Markierung für die aktuelle Temperatur
+
     </script>
 </body>
 </html>
