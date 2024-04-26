@@ -64,7 +64,7 @@
             "name": "MinAussentemperatur",
             "caption": "Minimale Außentemperatur",
             "digits": 1,
-            "minimum": 0.0,
+            "minimum": -20.0,
             "maximum": 50.0,
             "suffix": "°C"
         },
